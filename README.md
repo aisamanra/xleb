@@ -14,7 +14,7 @@ You will generally want to identify your root note with the `elem` function to e
   b <- X.children (X.byTag "b") parseB
 ~~~~
 
-Leaf data tends to come in two forms in XML: attribute values (like `\<tag attr="value"\>`) or tag content (like `\<tag\>value\<\/tag\>`). In both cases, the `Xleb` functions allow you to parse that content however you'd like by providing an arbitrary function of type `String -> Either String a`. The `xleb` library provides several built-in functions of this type for common situations.
+Leaf data tends to come in two forms in XML: attribute values (like `<tag attr="value">`) or tag content (like `<tag>value</tag>`). In both cases, the `Xleb` functions allow you to parse that content however you'd like by providing an arbitrary function of type `String -> Either String a`. The `xleb` library provides several built-in functions of this type for common situations.
 
 ~~~~.haskell
   c <- X.attr "index" X.number
