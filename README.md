@@ -60,4 +60,4 @@ entry :: X.Xleb (String, String)
 entry = (,) <$> X.attr "title" X.string <*> X.contents X.string
 ~~~~
 
-For a larger example, look at the [Atom-parsing example](examples/atom/Main.hs), which is both more idiomatic and more complete.
+For a larger example, look at the [Atom-parsing example](https://github.com/aisamanra/xleb/blob/master/examples/atom/Main.hs), which is both more idiomatic and more complete.

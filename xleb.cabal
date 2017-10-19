@@ -3,7 +3,17 @@ version:          0.1.0
 synopsis:         A simple monadic language for parsing XML structures.
 homepage:         https://github.com/aisamanra/xleb
 description:
-  A simple monadic language for parsing XML structures.
+  A simple monadic language designed for easily describing and parsing
+  XML structures.
+  .
+  The library in general has a small surface area and should be easy
+  to pick up just given the Haddock documentation, but slightly more
+  involved documentation can be found at
+  <https://github.com/aisamanra/xleb the Xleb github page> along with
+  <https://github.com/aisamanra/xleb/tree/master/examples some examples>.
+  .
+  Please report bugs and suggest features at
+  <https://github.com/aisamanra/xleb/issues the Xleb issue tracker>.
 license:          BSD3
 license-file:     LICENSE
 author:           Getty Ritter <xleb@infinitenegativeutility.com>
@@ -11,8 +21,10 @@ maintainer:       Getty Ritter <xleb@infinitenegativeutility.com>
 copyright:        ©2017 Getty Ritter
 category:         XML
 build-type:       Simple
-cabal-version:    >= 1.14
+cabal-version:    >= 1.18
 bug-reports:      https://github.com/aisamanra/xleb/issues
+extra-doc-files:  README.md,
+                  CHANGELOG.md
 
 source-repository head
   type: git
