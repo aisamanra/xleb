@@ -1,4 +1,4 @@
-# Xleb
+[![Hackage](https://img.shields.io/hackage/v/xleb.svg)](https://hackage.haskell.org/package/xleb)
 
 The `xleb` library defines a simple monadic language for easily parsing XML structures. It does not parse the XML itself, relying on the [`xml`](http://hackage.haskell.org/package/xml) library to define the underlying types and parser, but rather exposes a simple monad with helper functions to make defining XML-based structures quick and straightforward, of roughly equal complexity to defining a `fromJSON` instance for [`aeson`](http://hackage.haskell.org/package/aeson).
 
