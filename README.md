@@ -1,0 +1,63 @@
+# Xleb
+
+The `xleb` library defines a simple monadic language for easily parsing XML structures. It does not parse the XML itself, relying on the [`xml`](http://hackage.haskell.org/package/xml) library to define the underlying types and parser, but rather exposes a simple monad with helper functions to make defining XML-based structures quick and straightforward, of roughly equal complexity to defining a `fromJSON` instance for [`aeson`](http://hackage.haskell.org/package/aeson).
+
+## Basic Usage
+
+
+The `Xleb` monad describes both parsing _and_ traversing a given XML structure: several of the functions to produce `Xleb` computations take other `Xleb` computations, which are run on various sub-parts of the XML tree. Consequently, instead of decomposing an XML structure and passing it around to various functions, the `Xleb` language treats "the current location in the tree" as an implicit piece of data in the `Xleb` monad.
+
+You will generally want to identify your root note with the `elem` function to ensure that your root note has the tag you expect. Children of that node can be accessed using the `child` or `children` function to either unambiguously find a specific child element, or to find all child elements that match a given selector and apply a `Xleb` computation to each of them.
+
+~~~~.haskell
+  a <- X.child (X.byTag "a") parseA
+  b <- X.children (X.byTag "b") parseB
+~~~~
+
+Leaf data tends to come in two forms in XML: attribute values (like `\<tag attr="value"\>`) or tag content (like `\<tag\>value\<\/tag\>`). In both cases, the `Xleb` functions allow you to parse that content however you'd like by providing an arbitrary function of type `String -> Either String a`. The `xleb` library provides several built-in functions of this type for common situations.
+
+~~~~.haskell
+  c <- X.attr "index" X.number
+  d <- X.contents X.string
+~~~~
+
+Finally, the `Xleb` monad has `Alternative` instances which allow for concise expression of optional values or multiple possibilities.
+
+~~~~.haskell
+  e <- X.children X.any (parseA <|> parseB)
+  f <- optional (X.attr "total" X.number)
+~~~~
+
+## Simple Example
+
+Say we want to parse a simple XML feed format that looks like the following, with the extra caveat that we'd like the `author` field to be optional:
+
+~~~~.xml
+<feed>
+  <title>Feed Name</title>
+  <author>Pierre Menard</author>
+  <entry title="Entry 01">First Post</entry>
+  <entry title="Entry 02">Second Post Post</entry>
+</feed>
+~~~~
+
+We can write a `Xleb` computation which is capable of parsing this structure in a handful of lines, here written in a slightly unusual way in order to show off some features of the library:
+
+~~~~.haskell
+import           Control.Applicative (optional)
+import qualified Text.XML.Xleb as X
+
+feed :: X.Xleb (String, Maybe String, [(String, String)])
+feed = X.elem "feed" $ do
+  feedTitle   <- X.child (X.byTag "title") $
+                   X.contents X.string
+  feedAuthor  <- optional $ X.child (X.byTag "author") $
+                              X.contents X.string
+  feedEntries <- X.children (X.byTag "entry") entry
+  return (feedTitle, feedAuthor, feedEntries)
+
+entry :: X.Xleb (String, String)
+entry = (,) <$> X.attr "title" X.string <*> X.contents X.string
+~~~~
+
+For a larger example, look at the [Atom-parsing example](examples/atom/Main.hs), which is both more idiomatic and more complete.
