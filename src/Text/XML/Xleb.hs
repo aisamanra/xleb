@@ -142,8 +142,14 @@ type Parse t = String -> Either String t
 -- matched.
 data Selector
   = SelByName String
+  | SelByNS String
+  | SelBoth Selector Selector
   | SelAny
     deriving (Eq, Show)
+
+instance Monoid Selector where
+  mempty = SelAny
+  mappend = SelBoth
 
 instance GHC.IsString Selector where
   fromString = SelByName
@@ -152,6 +158,12 @@ toPred :: Selector -> XML.Element -> Bool
 toPred SelAny _ = True
 toPred (SelByName n) el =
   XML.showQName (XML.elName el) == n
+toPred (SelByNS n) el =
+  case XML.qPrefix (XML.elName el) of
+    Nothing -> False
+    Just p  -> p == n
+toPred (SelBoth s1 s2) el =
+  toPred s1 el && toPred s2 el
 
 -- | Find an attribute on the current focus element and parse it to a
 -- value of type @t@. If the parse function fails, then this will fail
@@ -223,6 +235,10 @@ reader = Right . read
 -- | Creates a 'Selector' which expects an exact tag name.
 byTag :: String -> Selector
 byTag = SelByName
+
+-- | Creates a 'Selector' which expects a specific namespace
+byNamespace :: String -> Selector
+byNamespace = SelByNS
 
 -- | Creates a 'Selector' which matches any possible child element.
 any :: Selector
